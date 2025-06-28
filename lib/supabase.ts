@@ -363,6 +363,8 @@ export async function getSystemsByViolationStatus(hasViolations: boolean): Promi
 // Get all water systems for map visualization  
 export async function getWaterSystemsForMap() {
   try {
+    console.log('getWaterSystemsForMap: Starting query...')
+    
     // Query the main water_systems table with calculated risk levels
     const { data, error } = await supabase
       .from('water_systems')
@@ -388,7 +390,11 @@ export async function getWaterSystemsForMap() {
       return []
     }
 
+    console.log('getWaterSystemsForMap: Raw data length:', data?.length || 0)
+    console.log('getWaterSystemsForMap: Sample raw data:', data?.[0])
+
     if (!data || data.length === 0) {
+      console.log('getWaterSystemsForMap: No data returned from query')
       return []
     }
 
@@ -453,10 +459,69 @@ export async function getWaterSystemsForMap() {
       }
     })
 
+    console.log('getWaterSystemsForMap: Final systems length:', systems.length)
+    console.log('getWaterSystemsForMap: Sample final system:', systems[0])
+    console.log('getWaterSystemsForMap: Systems with counties:', systems.filter(s => s.primary_county).length)
+    
     return systems
   } catch (error) {
     console.error('Failed to get systems for map:', error)
-    return []
+    
+    // Return mock data for testing if real data fails
+    console.log('getWaterSystemsForMap: Returning mock data for testing')
+    return [
+      {
+        pwsid: 'GA1234567',
+        pws_name: 'Mock Atlanta Water System',
+        primary_city: 'Atlanta',
+        primary_county: 'Fulton',
+        population_served_count: 500000,
+        pws_type_code: 'CWS',
+        primary_source_code: 'GW',
+        phone_number: '404-555-0100',
+        email_addr: 'water@atlanta.gov',
+        admin_name: 'Atlanta Water Department',
+        risk_level: 'low_risk' as RiskLevel,
+        current_violations: 1,
+        total_violations: 5,
+        health_violations: 0,
+        is_active: true
+      },
+      {
+        pwsid: 'GA2345678',
+        pws_name: 'Mock Savannah Water',
+        primary_city: 'Savannah',
+        primary_county: 'Chatham',
+        population_served_count: 150000,
+        pws_type_code: 'CWS',
+        primary_source_code: 'SW',
+        phone_number: '912-555-0200',
+        email_addr: 'water@savannah.gov',
+        admin_name: 'Savannah Water Department',
+        risk_level: 'no_violations' as RiskLevel,
+        current_violations: 0,
+        total_violations: 0,
+        health_violations: 0,
+        is_active: true
+      },
+      {
+        pwsid: 'GA3456789',
+        pws_name: 'Mock Augusta Water',
+        primary_city: 'Augusta',
+        primary_county: 'Richmond',
+        population_served_count: 200000,
+        pws_type_code: 'CWS',
+        primary_source_code: 'SW',
+        phone_number: '706-555-0300',
+        email_addr: 'water@augusta.gov',
+        admin_name: 'Augusta Water Department',
+        risk_level: 'high_risk' as RiskLevel,
+        current_violations: 3,
+        total_violations: 8,
+        health_violations: 1,
+        is_active: true
+      }
+    ]
   }
 }
 

@@ -58,6 +58,10 @@ export default function MapPage() {
         getCountyStats()
       ])
 
+      console.log('Map: Loaded systems:', systems.length)
+      console.log('Map: Sample system:', systems[0])
+      console.log('Map: Systems with counties:', systems.filter(s => s.primary_county).length)
+
       setMapData({
         systems,
         countyStats

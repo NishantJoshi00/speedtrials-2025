@@ -251,10 +251,14 @@ export default function MapComponent({ systems, onSystemSelect }: MapComponentPr
   useEffect(() => {
     if (!mapRef.current || !markersRef.current) return
 
+    console.log('MapComponent: Received systems:', systems.length)
+    console.log('MapComponent: Sample system:', systems[0])
+
     // Clear existing markers
     markersRef.current.clearLayers()
 
     if (systems.length === 0) {
+      console.log('MapComponent: No systems to display')
       return
     }
 
@@ -275,10 +279,14 @@ export default function MapComponent({ systems, onSystemSelect }: MapComponentPr
       return acc
     }, {})
 
+    console.log('MapComponent: Grouped by counties:', Object.keys(systemsByCounty))
+    console.log('MapComponent: Counties found:', Object.keys(systemsByCounty).length)
+
     // Create markers for each county
     Object.entries(systemsByCounty).forEach(([countyName, countySystems]) => {
       const coordinates = COUNTY_COORDINATES[countyName]
       if (!coordinates) {
+        console.log('MapComponent: No coordinates for county:', countyName)
         return
       }
 
