@@ -1,8 +1,4 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
   "routes": [
     {
       "src": "/api/(.*)",
@@ -12,10 +8,5 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "functions": {
-    "app/api/chat/route.ts": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
