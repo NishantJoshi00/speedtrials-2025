@@ -385,7 +385,7 @@ export async function getWaterSystemsForMap() {
       `)
       .eq('is_active', true)
       .not('primary_city', 'is', null)
-      .limit(3000) // Get more systems for broader coverage
+      // Remove limit to get all active systems
 
     if (error) {
       console.error('Map systems query error:', error)
