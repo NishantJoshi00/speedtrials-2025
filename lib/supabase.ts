@@ -150,6 +150,7 @@ export async function getSystemDetails(pwsid: string) {
         health_violations
       `)
       .eq('pwsid', pwsid)
+      .eq('is_active', true)
       .single()
 
     // Also get full system details for contact info
@@ -162,9 +163,11 @@ export async function getSystemDetails(pwsid: string) {
         address_line1,
         city_name,
         state_code,
-        zip_code
+        zip_code,
+        is_active
       `)
       .eq('pwsid', pwsid)
+      .eq('is_active', true)
       .single()
 
     if (systemError) {
@@ -365,20 +368,28 @@ export async function getWaterSystemsForMap() {
   try {
     console.log('getWaterSystemsForMap: Starting query...')
     
-    // Query the main water_systems table with calculated risk levels
+    // First, let's see what columns actually exist
+    console.log('Checking available columns in water_systems table...')
+    
+    // Get a single row to see the schema
+    const { data: schemaCheck, error: schemaError } = await supabase
+      .from('water_systems')
+      .select('*')
+      .limit(1)
+    
+    if (schemaCheck && schemaCheck.length > 0) {
+      console.log('Available columns:', Object.keys(schemaCheck[0]))
+    }
+    
+    // Query with the correct columns based on your updated schema
     const { data, error } = await supabase
       .from('water_systems')
       .select(`
         pwsid,
         pws_name,
-        primary_city,
         primary_county,
         population_served_count,
         pws_type_code,
-        primary_source_code,
-        phone_number,
-        email_addr,
-        admin_name,
         is_active
       `)
       .eq('is_active', true)
@@ -443,14 +454,14 @@ export async function getWaterSystemsForMap() {
       return {
         pwsid: system.pwsid,
         pws_name: system.pws_name,
-        primary_city: system.primary_city,
-        primary_county: system.primary_county,
+        primary_city: null,
+        primary_county: system.primary_county, // Now using the real county field
         population_served_count: system.population_served_count,
         pws_type_code: system.pws_type_code,
-        primary_source_code: system.primary_source_code,
-        phone_number: system.phone_number,
-        email_addr: system.email_addr,
-        admin_name: system.admin_name,
+        primary_source_code: null,
+        phone_number: null,
+        email_addr: null,
+        admin_name: null,
         risk_level,
         current_violations: violations.current,
         total_violations: violations.total,

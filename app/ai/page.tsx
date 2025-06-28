@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useChat } from 'ai/react'
 import { Send, Bot, User, Sparkles } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 
 export default function AIPage() {
   const [isThinking, setIsThinking] = useState(false)
@@ -50,10 +51,10 @@ export default function AIPage() {
                 <p className="text-sm mt-2">Try asking:</p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3 text-sm">
                   <button 
-                    onClick={() => handleInputChange({ target: { value: "What counties have the most water violations?" } } as any)}
+                    onClick={() => handleInputChange({ target: { value: "What counties have the most violations?" } } as any)}
                     className="p-3 bg-brand-cream-50 rounded-md border border-brand-cream-200 hover:bg-brand-cream-100 text-left"
                   >
-                    "What counties have the most water violations?"
+                    "What counties have the most violations?"
                   </button>
                   <button 
                     onClick={() => handleInputChange({ target: { value: "Show me water systems in Atlanta" } } as any)}
@@ -62,16 +63,16 @@ export default function AIPage() {
                     "Show me water systems in Atlanta"
                   </button>
                   <button 
-                    onClick={() => handleInputChange({ target: { value: "How many people are affected by violations?" } } as any)}
+                    onClick={() => handleInputChange({ target: { value: "Give me Georgia water quality stats" } } as any)}
                     className="p-3 bg-brand-cream-50 rounded-md border border-brand-cream-200 hover:bg-brand-cream-100 text-left"
                   >
-                    "How many people are affected by violations?"
+                    "Give me Georgia water quality stats"
                   </button>
                   <button 
-                    onClick={() => handleInputChange({ target: { value: "What are the safest counties for water?" } } as any)}
+                    onClick={() => handleInputChange({ target: { value: "Which systems have high risk violations?" } } as any)}
                     className="p-3 bg-brand-cream-50 rounded-md border border-brand-cream-200 hover:bg-brand-cream-100 text-left"
                   >
-                    "What are the safest counties for water?"
+                    "Which systems have high risk violations?"
                   </button>
                 </div>
               </div>
@@ -108,9 +109,30 @@ export default function AIPage() {
                       : 'bg-brand-cream-50 text-gray-900 border border-brand-cream-200'
                   }`}
                 >
-                  <div className="whitespace-pre-wrap text-sm">
-                    {message.content}
-                  </div>
+                  {message.role === 'user' ? (
+                    <div className="whitespace-pre-wrap text-sm">
+                      {message.content}
+                    </div>
+                  ) : (
+                    <div className="text-sm prose prose-sm max-w-none prose-headings:text-gray-900 prose-p:text-gray-900 prose-strong:text-gray-900 prose-ul:text-gray-900 prose-li:text-gray-900">
+                      <ReactMarkdown
+                        components={{
+                          h1: ({ children }) => <h1 className="text-lg font-bold mb-2 text-gray-900">{children}</h1>,
+                          h2: ({ children }) => <h2 className="text-base font-bold mb-2 text-gray-900">{children}</h2>,
+                          h3: ({ children }) => <h3 className="text-sm font-bold mb-1 text-gray-900">{children}</h3>,
+                          p: ({ children }) => <p className="mb-2 text-gray-900">{children}</p>,
+                          ul: ({ children }) => <ul className="list-disc list-inside mb-2 text-gray-900">{children}</ul>,
+                          ol: ({ children }) => <ol className="list-decimal list-inside mb-2 text-gray-900">{children}</ol>,
+                          li: ({ children }) => <li className="mb-1 text-gray-900">{children}</li>,
+                          strong: ({ children }) => <strong className="font-semibold text-gray-900">{children}</strong>,
+                          em: ({ children }) => <em className="italic text-gray-900">{children}</em>,
+                          code: ({ children }) => <code className="bg-gray-100 px-1 py-0.5 rounded text-xs font-mono text-gray-800">{children}</code>,
+                        }}
+                      >
+                        {message.content}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

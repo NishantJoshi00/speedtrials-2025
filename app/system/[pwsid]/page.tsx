@@ -102,7 +102,7 @@ export default function SystemDetailsPage() {
         <div className="text-center py-12">
           <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
           <h1 className="text-xl font-bold text-gray-900  mb-2">System Not Found</h1>
-          <p className="text-gray-600 ">{error || 'The requested water system could not be found.'}</p>
+          <p className="text-gray-600 ">{error || 'The requested water system could not be found or is no longer active.'}</p>
         </div>
       </div>
     )

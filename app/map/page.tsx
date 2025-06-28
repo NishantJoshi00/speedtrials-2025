@@ -26,18 +26,36 @@ export default function MapPage() {
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <div className="p-4 border-b border-gray-200">
           <div className="text-sm text-gray-600">
-            Test map with sample locations
+            Showing Georgia water systems by county with risk-based color coding
           </div>
         </div>
         
         <SimpleMap />
       </div>
 
-      {/* Test Info */}
-      <div className="mt-6 bg-blue-50 border border-blue-200 rounded-xl p-4">
-        <h3 className="font-medium text-blue-800 mb-2">Test Map</h3>
-        <p className="text-sm text-blue-700">
-          This is a simplified map to test basic functionality. You should see markers for Atlanta, Savannah, and Augusta.
+      {/* Map Legend */}
+      <div className="mt-6 bg-white border border-gray-200 rounded-xl p-4">
+        <h3 className="font-medium text-gray-900 mb-3">Map Legend</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="flex items-center">
+            <div className="w-4 h-4 rounded-full bg-green-500 mr-2"></div>
+            <span>No Violations</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 rounded-full bg-yellow-500 mr-2"></div>
+            <span>Low Risk</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 rounded-full bg-orange-500 mr-2"></div>
+            <span>Medium Risk</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 rounded-full bg-red-500 mr-2"></div>
+            <span>High Risk</span>
+          </div>
+        </div>
+        <p className="text-xs text-gray-600 mt-2">
+          Circle size represents population served. Click markers for detailed county information.
         </p>
       </div>
     </div>
