@@ -129,8 +129,8 @@ LEFT JOIN LATERAL (
 LEFT JOIN LATERAL (
     SELECT 
         COUNT(*) as total_violations,
-        COUNT(*) FILTER (WHERE is_current_violation = true) as current_violations,
-        COUNT(*) FILTER (WHERE is_health_based_ind = true AND is_current_violation = true) as health_violations
+        COUNT(*) FILTER (WHERE violation_status IN ('Unaddressed', 'Addressed')) as current_violations,
+        COUNT(*) FILTER (WHERE is_health_based_ind = true) as health_violations
     FROM violations 
     WHERE pwsid = ws.pwsid
 ) v_summary ON true

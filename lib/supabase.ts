@@ -368,33 +368,24 @@ export async function getWaterSystemsForMap() {
   try {
     console.log('getWaterSystemsForMap: Starting query...')
     
-    // First, let's see what columns actually exist
-    console.log('Checking available columns in water_systems table...')
-    
-    // Get a single row to see the schema
-    const { data: schemaCheck, error: schemaError } = await supabase
-      .from('water_systems')
-      .select('*')
-      .limit(1)
-    
-    if (schemaCheck && schemaCheck.length > 0) {
-      console.log('Available columns:', Object.keys(schemaCheck[0]))
-    }
-    
-    // Query with the correct columns based on your updated schema
+    // Since primary_county is null in the view, get systems with cities and map to counties
     const { data, error } = await supabase
-      .from('water_systems')
+      .from('water_systems_map_view')
       .select(`
         pwsid,
         pws_name,
-        primary_county,
+        primary_city,
         population_served_count,
         pws_type_code,
+        risk_level,
+        current_violations,
+        total_violations,
+        health_violations,
         is_active
       `)
       .eq('is_active', true)
-      .not('primary_county', 'is', null)
-      .limit(1000)
+      .not('primary_city', 'is', null)
+      .limit(3000) // Get more systems for broader coverage
 
     if (error) {
       console.error('Map systems query error:', error)
@@ -409,130 +400,86 @@ export async function getWaterSystemsForMap() {
       return []
     }
 
-    // Get violation counts for each system
-    const pwsids = data.map(s => s.pwsid)
-    const { data: violationsData } = await supabase
-      .from('violations')
-      .select('pwsid, is_health_based_ind, violation_status')
-      .in('pwsid', pwsids)
+    // Comprehensive mapping of Georgia cities to counties
+    const cityToCounty: Record<string, string> = {
+      'ATLANTA': 'Fulton', 'AUGUSTA': 'Richmond', 'COLUMBUS': 'Muscogee', 'MACON': 'Bibb',
+      'SAVANNAH': 'Chatham', 'ATHENS': 'Clarke', 'SANDY SPRINGS': 'Fulton', 'ROSWELL': 'Fulton',
+      'JOHNS CREEK': 'Fulton', 'ALBANY': 'Dougherty', 'MARIETTA': 'Cobb', 'VALDOSTA': 'Lowndes',
+      'SMYRNA': 'Cobb', 'DUNWOODY': 'DeKalb', 'ROME': 'Floyd', 'PEACHTREE CORNERS': 'Gwinnett',
+      'GAINESVILLE': 'Hall', 'HINESVILLE': 'Liberty', 'PEACHTREE CITY': 'Fayette', 'KENNESAW': 'Cobb',
+      'LAWRENCEVILLE': 'Gwinnett', 'DOUGLASVILLE': 'Douglas', 'STOCKBRIDGE': 'Henry', 'DECATUR': 'DeKalb',
+      'TUCKER': 'DeKalb', 'BAXLEY': 'Appling', 'SURRENCY': 'Appling', 'THOMASVILLE': 'Thomas',
+      'WARNER ROBINS': 'Houston', 'BRUNSWICK': 'Glynn', 'CARROLLTON': 'Carroll', 'NEWNAN': 'Coweta',
+      'MILLEDGEVILLE': 'Baldwin', 'TIFTON': 'Tift', 'DALTON': 'Whitfield', 'STATESBORO': 'Bulloch',
+      'GRIFFIN': 'Spalding', 'CONYERS': 'Rockdale', 'POWDER SPRINGS': 'Cobb', 'EAST POINT': 'Fulton',
+      'UNION CITY': 'Fulton', 'FOREST PARK': 'Clayton', 'COLLEGE PARK': 'Fulton', 'FAIRBURN': 'Fulton',
+      'WOODSTOCK': 'Cherokee', 'CANTON': 'Cherokee', 'ALPHARETTA': 'Fulton', 'CUMMING': 'Forsyth',
+      'ACWORTH': 'Cobb', 'ADEL': 'Cook', 'ALBANY': 'Dougherty', 'ALMA': 'Bacon', 'AMERICUS': 'Sumter',
+      'ASHBURN': 'Turner', 'ATHENS': 'Clarke', 'BAINBRIDGE': 'Decatur', 'BARNESVILLE': 'Lamar',
+      'BAXLEY': 'Appling', 'BLAIRSVILLE': 'Union', 'BLAKELY': 'Early', 'BLUE RIDGE': 'Fannin',
+      'BREMEN': 'Haralson', 'CAIRO': 'Grady', 'CALHOUN': 'Gordon', 'CAMILLA': 'Mitchell',
+      'CARTERSVILLE': 'Bartow', 'CEDARTOWN': 'Polk', 'CHATSWORTH': 'Murray', 'CLAXTON': 'Evans',
+      'CLEVELAND': 'Habersham', 'COCHRAN': 'Bleckley', 'COLUMBUS': 'Muscogee', 'COMMERCE': 'Jackson',
+      'CORDELE': 'Crisp', 'CORNELIA': 'Habersham', 'COVINGTON': 'Newton', 'DAHLONEGA': 'Lumpkin',
+      'DAWSONVILLE': 'Dawson', 'DONALSONVILLE': 'Seminole', 'DOUGLAS': 'Coffee', 'DUBLIN': 'Laurens',
+      'EASTMAN': 'Dodge', 'ELBERTON': 'Elbert', 'ELLIJAY': 'Gilmer', 'FAYETTEVILLE': 'Fayette',
+      'FITZGERALD': 'Ben Hill', 'FOLKSTON': 'Charlton', 'FORSYTH': 'Monroe', 'FORT VALLEY': 'Peach',
+      'GLENNVILLE': 'Tattnall', 'GRAY': 'Jones', 'GREENSBORO': 'Greene', 'HAMILTON': 'Harris',
+      'HARTWELL': 'Hart', 'HAWKINSVILLE': 'Pulaski', 'HAZLEHURST': 'Jeff Davis', 'HELEN': 'White',
+      'HEPHZIBAH': 'Richmond', 'HIAWASSEE': 'Towns', 'JESUP': 'Wayne', 'LAFAYETTE': 'Walker',
+      'LAGRANGE': 'Troup', 'LAKELAND': 'Lanier', 'LAVONIA': 'Franklin', 'LEESBURG': 'Lee',
+      'LOUISVILLE': 'Jefferson', 'LUDOWICI': 'Long', 'LYONS': 'Toombs', 'MADISON': 'Morgan',
+      'MANCHESTER': 'Meriwether', 'MCRAE': 'Telfair', 'METTER': 'Candler', 'MONROE': 'Walton',
+      'MONTEZUMA': 'Macon', 'MOULTRIE': 'Colquitt', 'MOUNT VERNON': 'Montgomery', 'NASHVILLE': 'Berrien',
+      'OCILLA': 'Irwin', 'PEARSON': 'Atkinson', 'PERRY': 'Houston', 'PRESTON': 'Webster',
+      'QUITMAN': 'Brooks', 'REIDSVILLE': 'Tattnall', 'RINGGOLD': 'Catoosa', 'SANDERSVILLE': 'Washington',
+      'SOPERTON': 'Treutlen', 'SPARTA': 'Hancock', 'SUMMERVILLE': 'Chattooga', 'SWAINSBORO': 'Emanuel',
+      'SYLVESTER': 'Worth', 'TENNILLE': 'Washington', 'THOMASTON': 'Upson', 'THOMSON': 'McDuffie',
+      'TOCCOA': 'Stephens', 'VALDOSTA': 'Lowndes', 'VIDALIA': 'Toombs', 'WAYCROSS': 'Ware',
+      'WAYNESBORO': 'Burke', 'WEST POINT': 'Troup', 'WINDER': 'Barrow', 'WRIGHTSVILLE': 'Johnson',
+      'YOUNG HARRIS': 'Towns', 'ZEBULON': 'Pike',
+      // Additional cities from the sample data
+      'GRAHAM': 'Appling', 'WILLACOOCHEE': 'Atkinson', 'AXSON': 'Atkinson', 'NEWTON': 'Baker',
+      'HOMER': 'Banks', 'MAYSVILLE': 'Banks', 'BALDWIN': 'Banks', 'AUBURN': 'Barrow',
+      'STATHAM': 'Barrow', 'ADAIRSVILLE': 'Bartow', 'DOUGLAS': 'Coffee', 'AMBROSE': 'Coffee',
+      'NICHOLLS': 'Coffee', 'BROXTON': 'Coffee', 'WAYCROSS': 'Ware', 'BLACKSHEAR': 'Pierce',
+      'PATTERSON': 'Pierce', 'SCREVEN': 'Wayne', 'OFFERMAN': 'Pierce', 'MANOR': 'Ware'
+    }
 
-    // Calculate violation counts per system
-    const violationCounts = (violationsData || []).reduce((acc: Record<string, any>, violation) => {
-      const pwsid = violation.pwsid
-      if (!acc[pwsid]) {
-        acc[pwsid] = { current: 0, total: 0, health: 0 }
-      }
-      
-      acc[pwsid].total += 1
-      
-      if (violation.violation_status === 'Unaddressed' || violation.violation_status === 'Addressed') {
-        acc[pwsid].current += 1
-      }
-      
-      if (violation.is_health_based_ind) {
-        acc[pwsid].health += 1
-      }
-      
-      return acc
-    }, {})
-
-    // Calculate risk levels and transform to expected interface
+    // Transform to expected interface with county mapping
     const systems = data.map(system => {
-      const violations = violationCounts[system.pwsid] || { current: 0, total: 0, health: 0 }
+      // Clean city name by removing state suffixes and trimming
+      const cleanCity = system.primary_city?.toUpperCase().replace(/\s+(GEORGIA|GA)$/, '').trim() || ''
+      const mappedCounty = cityToCounty[cleanCity] || 'Unknown'
       
-      // Calculate risk level based on violations
-      let risk_level: 'no_violations' | 'low_risk' | 'medium_risk' | 'high_risk' = 'no_violations'
-      
-      if (violations.health > 0) {
-        risk_level = 'high_risk'
-      } else if (violations.current >= 3) {
-        risk_level = 'medium_risk'
-      } else if (violations.current > 0) {
-        risk_level = 'low_risk'
-      }
-
       return {
         pwsid: system.pwsid,
         pws_name: system.pws_name,
-        primary_city: null,
-        primary_county: system.primary_county, // Now using the real county field
+        primary_city: system.primary_city,
+        primary_county: mappedCounty,
         population_served_count: system.population_served_count,
         pws_type_code: system.pws_type_code,
         primary_source_code: null,
         phone_number: null,
         email_addr: null,
         admin_name: null,
-        risk_level,
-        current_violations: violations.current,
-        total_violations: violations.total,
-        health_violations: violations.health,
+        risk_level: system.risk_level,
+        current_violations: system.current_violations,
+        total_violations: system.total_violations,
+        health_violations: system.health_violations,
         is_active: system.is_active
       }
-    })
+    }).filter(system => system.primary_county !== 'Unknown') // Only include systems we can map to counties
 
     console.log('getWaterSystemsForMap: Final systems length:', systems.length)
     console.log('getWaterSystemsForMap: Sample final system:', systems[0])
     console.log('getWaterSystemsForMap: Systems with counties:', systems.filter(s => s.primary_county).length)
+    console.log('getWaterSystemsForMap: Counties represented:', [...new Set(systems.map(s => s.primary_county))])
     
     return systems
   } catch (error) {
     console.error('Failed to get systems for map:', error)
-    
-    // Return mock data for testing if real data fails
-    console.log('getWaterSystemsForMap: Returning mock data for testing')
-    return [
-      {
-        pwsid: 'GA1234567',
-        pws_name: 'Mock Atlanta Water System',
-        primary_city: 'Atlanta',
-        primary_county: 'Fulton',
-        population_served_count: 500000,
-        pws_type_code: 'CWS',
-        primary_source_code: 'GW',
-        phone_number: '404-555-0100',
-        email_addr: 'water@atlanta.gov',
-        admin_name: 'Atlanta Water Department',
-        risk_level: 'low_risk' as RiskLevel,
-        current_violations: 1,
-        total_violations: 5,
-        health_violations: 0,
-        is_active: true
-      },
-      {
-        pwsid: 'GA2345678',
-        pws_name: 'Mock Savannah Water',
-        primary_city: 'Savannah',
-        primary_county: 'Chatham',
-        population_served_count: 150000,
-        pws_type_code: 'CWS',
-        primary_source_code: 'SW',
-        phone_number: '912-555-0200',
-        email_addr: 'water@savannah.gov',
-        admin_name: 'Savannah Water Department',
-        risk_level: 'no_violations' as RiskLevel,
-        current_violations: 0,
-        total_violations: 0,
-        health_violations: 0,
-        is_active: true
-      },
-      {
-        pwsid: 'GA3456789',
-        pws_name: 'Mock Augusta Water',
-        primary_city: 'Augusta',
-        primary_county: 'Richmond',
-        population_served_count: 200000,
-        pws_type_code: 'CWS',
-        primary_source_code: 'SW',
-        phone_number: '706-555-0300',
-        email_addr: 'water@augusta.gov',
-        admin_name: 'Augusta Water Department',
-        risk_level: 'high_risk' as RiskLevel,
-        current_violations: 3,
-        total_violations: 8,
-        health_violations: 1,
-        is_active: true
-      }
-    ]
+    return []
   }
 }
 
