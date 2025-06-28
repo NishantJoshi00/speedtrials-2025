@@ -471,26 +471,12 @@ export async function getWaterSystemsForMap() {
 // Get county statistics
 export async function getCountyStats() {
   try {
-    const { data, error } = await supabase
-      .from('water_systems_map_view')
-      .select(`
-        primary_county,
-        population_served_count,
-        current_violations,
-        total_violations,
-        health_violations,
-        risk_level
-      `)
-      .eq('is_active', true)
-      .not('primary_county', 'is', null)
-
-    if (error) {
-      console.error('County stats query error:', error)
-      return {}
-    }
-
+    // Since we're now using the real data from getWaterSystemsForMap,
+    // we can calculate county stats from that same data to ensure consistency
+    const systems = await getWaterSystemsForMap()
+    
     // Group by county and calculate aggregations
-    const countyStats = (data || []).reduce((acc: Record<string, any>, system) => {
+    const countyStats = systems.reduce((acc: Record<string, any>, system) => {
       const county = system.primary_county
       if (!county) return acc
 

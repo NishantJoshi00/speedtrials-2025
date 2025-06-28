@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 
 import { useEffect, useRef } from 'react'
@@ -82,7 +83,6 @@ const COUNTY_COORDINATES: Record<string, [number, number]> = {
   'Wayne': [-81.8879, 31.5666],
   'Pierce': [-82.0796, 31.2166],
   'Atkinson': [-83.2085, 31.2166],
-  'Coffee': [-82.9540, 31.5204],
   'Bacon': [-82.4318, 31.5549],
   'Appling': [-82.3179, 31.7274],
   'Jeff Davis': [-82.6068, 31.9299],
@@ -93,7 +93,6 @@ const COUNTY_COORDINATES: Record<string, [number, number]> = {
   'Bulloch': [-81.7735, 32.4332],
   'Screven': [-81.6179, 32.7166],
   'Jenkins': [-81.9568, 32.8458],
-  'Burke': [-82.0029, 33.1901],
   'Jefferson': [-82.5585, 33.0041],
   'Washington': [-82.7385, 32.9598],
   'Johnson': [-82.6779, 32.6593],

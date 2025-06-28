@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import Image from 'next/image'
 import './globals.css'
 
 const inter = Inter({ 
@@ -57,12 +58,12 @@ export default function RootLayout({
         {/* Main layout */}
         <div className="min-h-screen flex flex-col">
           {/* Header - Simplified */}
-          <header className="bg-white border-b border-brand-cream-300">
+          <header className="bg-white border-b border-brand-cream-200">
             <div className="max-w-6xl mx-auto px-6">
               <div className="flex items-center justify-between h-12">
                 <div className="flex items-center space-x-2">
                   <div className="w-6 h-6 flex items-center justify-center">
-                    <img src="/logo.png" alt="Georgia Water Logo" className="w-6 h-6 object-contain" />
+                    <Image src="/logo.png" alt="Georgia Water Logo" width={24} height={24} className="object-contain" />
                   </div>
                   <div>
                     <h1 className="text-base font-medium text-gray-700">
@@ -105,7 +106,7 @@ export default function RootLayout({
           </main>
 
           {/* Footer - Simplified */}
-          <footer className="bg-white border-t border-brand-cream-300">
+          <footer className="bg-white border-t border-brand-cream-200">
             <div className="max-w-6xl mx-auto px-6 py-8">
               <div className="text-center space-y-4">
                 <div className="text-sm text-gray-600">

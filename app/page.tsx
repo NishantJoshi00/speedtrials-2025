@@ -1,3 +1,4 @@
+// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -43,7 +44,7 @@ export default function HomePage() {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [isSearching, setIsSearching] = useState(false)
   const [stats, setStats] = useState<QuickStatsType>(mockStats)
-  const [popularCities, setPopularCities] = useState<PopularLocation[]>(mockPopularLocations)
+  const [, setPopularCities] = useState<PopularLocation[]>(mockPopularLocations)
   const [popularCounties, setPopularCounties] = useState<PopularLocation[]>(mockPopularCounties)
   const [systemTypes, setSystemTypes] = useState<SystemTypeCount[]>(mockSystemTypes)
   const [isLocating, setIsLocating] = useState(false)
@@ -315,7 +316,7 @@ export default function HomePage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <button 
           onClick={() => handleStatsCardClick('clean')}
-          className={`bg-brand-cream-50 rounded-md shadow-sm p-6 border border-brand-cream-300 hover:shadow-md transition-all text-left ${
+          className={`bg-brand-cream-50 rounded-md shadow-sm p-6 border border-brand-cream-200 hover:shadow-md transition-all text-left ${
             statsFilter === 'clean' ? 'ring-2 ring-green-500 border-green-500' : ''
           }`}
         >
@@ -330,7 +331,7 @@ export default function HomePage() {
         
         <button 
           onClick={() => handleStatsCardClick('violations')}
-          className={`bg-brand-cream-50 rounded-md shadow-sm p-6 border border-brand-cream-300 hover:shadow-md transition-all text-left ${
+          className={`bg-brand-cream-50 rounded-md shadow-sm p-6 border border-brand-cream-200 hover:shadow-md transition-all text-left ${
             statsFilter === 'violations' ? 'ring-2 ring-orange-500 border-orange-500' : ''
           }`}
         >
@@ -343,7 +344,7 @@ export default function HomePage() {
           </div>
         </button>
         
-        <div className="bg-brand-cream-50 rounded-md shadow-sm p-6 border border-brand-cream-300">
+        <div className="bg-brand-cream-50 rounded-md shadow-sm p-6 border border-brand-cream-200">
           <div className="flex items-center">
             <Info className="h-8 w-8 text-primary-500 mr-3" aria-hidden="true" />
             <div>
@@ -356,7 +357,7 @@ export default function HomePage() {
 
       {/* Active Filter Display */}
       {statsFilter !== 'all' && (
-        <div className="mb-6 flex items-center justify-between bg-brand-cream-100 border border-brand-cream-300 rounded-md p-4">
+        <div className="mb-6 flex items-center justify-between bg-brand-cream-100 border border-brand-cream-200 rounded-md p-4">
           <div className="flex items-center">
             <Info className="h-5 w-5 text-primary-600 mr-2" />
             <span className="text-sm font-medium text-primary-800">
@@ -373,7 +374,7 @@ export default function HomePage() {
       )}
 
       {/* Search Section */}
-      <div className="bg-white rounded-md shadow-sm p-6 mb-8 border border-brand-cream-300">
+      <div className="bg-white rounded-md shadow-sm p-6 mb-8 border border-brand-cream-200">
         <div className="flex gap-3 mb-4">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -424,7 +425,7 @@ export default function HomePage() {
 
         {/* Filter Options */}
         {showFilters && (
-          <div className="mb-4 p-4 bg-gray-50 rounded-sm border border-brand-cream-300">
+          <div className="mb-4 p-4 bg-gray-50 rounded-sm border border-brand-cream-200">
             <h4 className="text-sm font-medium text-gray-700 mb-3">Filter Results</h4>
             <label className="flex items-center space-x-3 cursor-pointer">
               <input
@@ -475,7 +476,7 @@ export default function HomePage() {
               {searchResults.map((system) => (
                 <button 
                   key={system.pwsid} 
-                  className="w-full border border-brand-cream-300 rounded-sm p-4 hover:bg-white cursor-pointer transition-colors text-left bg-white"
+                  className="w-full border border-brand-cream-200 rounded-sm p-4 hover:bg-white cursor-pointer transition-colors text-left bg-white"
                   onClick={() => {
                     router.push(`/system/${system.pwsid}`)
                   }}

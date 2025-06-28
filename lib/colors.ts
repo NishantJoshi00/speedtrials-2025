@@ -62,7 +62,7 @@ export const colors = {
   // UI colors
   card: {
     bg: 'bg-white',
-    border: 'border-brand-cream-300',
+    border: 'border-brand-cream-200',
     shadow: 'shadow-sm',
     hover: 'hover:shadow-md',
   },
