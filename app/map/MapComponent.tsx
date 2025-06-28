@@ -208,6 +208,8 @@ export default function MapComponent({ systems, onSystemSelect }: MapComponentPr
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return
 
+    console.log('MapComponent: Initializing map...')
+
     // Create map centered on Georgia with tighter bounds
     const map = L.map(mapContainerRef.current, {
       center: [32.75, -83.5], // Georgia center
@@ -216,6 +218,8 @@ export default function MapComponent({ systems, onSystemSelect }: MapComponentPr
       minZoom: 6,
       maxZoom: 12
     })
+
+    console.log('MapComponent: Map created:', !!map)
 
     // Add CartoDB Positron tiles with administrative boundaries visible
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -238,6 +242,13 @@ export default function MapComponent({ systems, onSystemSelect }: MapComponentPr
     const markersGroup = L.layerGroup().addTo(map)
     markersRef.current = markersGroup
     mapRef.current = map
+
+    console.log('MapComponent: Map initialized with markers group')
+
+    // Add a test marker to ensure map is working
+    const testMarker = L.marker([33.7490, -84.3880]).addTo(markersGroup)
+    testMarker.bindPopup('Test marker - Atlanta')
+    console.log('MapComponent: Test marker added')
 
     return () => {
       if (mapRef.current) {
@@ -423,8 +434,12 @@ export default function MapComponent({ systems, onSystemSelect }: MapComponentPr
   return (
     <div 
       ref={mapContainerRef} 
-      className="w-full h-96 md:h-[600px]"
-      style={{ minHeight: '400px' }}
+      className="w-full h-96 md:h-[600px] bg-gray-100"
+      style={{ 
+        minHeight: '400px',
+        height: '600px',
+        position: 'relative'
+      }}
     />
   )
 }
