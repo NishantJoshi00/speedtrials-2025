@@ -276,15 +276,12 @@ export default function HomePage() {
   }
 
   const handleStatsCardClick = async (type: 'clean' | 'violations') => {
-    console.log('Stats card clicked:', type)
     setIsSearching(true)
     setStatsFilter(type)
     setSearchQuery('') // Clear search query when filtering by stats
     
     try {
-      console.log('Loading systems with violations:', type === 'violations')
       const results = await getSystemsByViolationStatus(type === 'violations')
-      console.log('Results loaded:', results.length, 'systems')
       setSearchResults(results)
     } catch (error) {
       console.error('Failed to load systems by violation status:', error)

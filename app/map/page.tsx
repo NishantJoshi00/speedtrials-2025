@@ -1,4 +1,3 @@
-// @ts-nocheck
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -54,16 +53,10 @@ export default function MapPage() {
       setLoading(true)
       setError(null)
 
-      console.log('Map page: Starting to load data...')
-      
       const [systems, countyStats] = await Promise.all([
         getWaterSystemsForMap(),
         getCountyStats()
       ])
-
-      console.log('Map page: Loaded systems:', systems.length)
-      console.log('Map page: Sample system:', systems[0])
-      console.log('Map page: All systems:', systems.slice(0, 3))
 
       setMapData({
         systems,
@@ -98,10 +91,6 @@ export default function MapPage() {
   }
 
   const filteredSystems = mapData ? applyFilters(mapData.systems) : []
-
-  // Debug log for filtered systems
-  console.log('Map page: Filtered systems count:', filteredSystems.length)
-  console.log('Map page: Filter state:', filters)
 
   if (loading) {
     return (

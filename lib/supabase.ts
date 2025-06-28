@@ -363,8 +363,6 @@ export async function getSystemsByViolationStatus(hasViolations: boolean): Promi
 // Get all water systems for map visualization  
 export async function getWaterSystemsForMap() {
   try {
-    console.log('Starting getWaterSystemsForMap query...')
-    
     // Query the main water_systems table with calculated risk levels
     const { data, error } = await supabase
       .from('water_systems')
@@ -390,11 +388,7 @@ export async function getWaterSystemsForMap() {
       return []
     }
 
-    console.log('Query successful, got', data?.length, 'records')
-    console.log('Sample data:', data?.[0])
-
     if (!data || data.length === 0) {
-      console.log('No water systems data found')
       return []
     }
 
@@ -459,8 +453,6 @@ export async function getWaterSystemsForMap() {
       }
     })
 
-    console.log('Transformed systems:', systems.length)
-    console.log('Sample transformed system:', systems[0])
     return systems
   } catch (error) {
     console.error('Failed to get systems for map:', error)

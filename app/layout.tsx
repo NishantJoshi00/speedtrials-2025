@@ -1,7 +1,8 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import Image from 'next/image'
 import './globals.css'
+import 'leaflet/dist/leaflet.css'
 
 const inter = Inter({ 
   subsets: ['latin'],
@@ -9,13 +10,18 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#16a34a',
+}
+
 export const metadata: Metadata = {
   title: 'Georgia Water Safety Dashboard',
   description: 'Know what\'s in your drinking water. Access real-time water quality information for public water systems across Georgia.',
   keywords: ['Georgia', 'water quality', 'drinking water', 'public health', 'SDWA', 'water safety'],
   authors: [{ name: 'Georgia Environmental Protection Division' }],
-  viewport: 'width=device-width, initial-scale=1',
-  themeColor: '#16a34a',
+  metadataBase: new URL('https://georgia-water-dashboard.vercel.app'),
   openGraph: {
     title: 'Georgia Water Safety Dashboard',
     description: 'Know what\'s in your drinking water. Access real-time water quality information for public water systems across Georgia.',
@@ -87,6 +93,12 @@ export default function RootLayout({
                       className="text-sm font-medium text-gray-600 hover:text-gray-900"
                     >
                       Map
+                    </a>
+                    <a 
+                      href="/ai" 
+                      className="text-sm font-medium text-gray-600 hover:text-gray-900"
+                    >
+                      AI Assistant
                     </a>
                   </nav>
                   <a 
