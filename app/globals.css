@@ -1,0 +1,119 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Accessibility and performance improvements */
+:root {
+  --font-inter: 'Inter', sans-serif;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bg-safe-500 {
+    @apply bg-green-700;
+  }
+  .bg-warning-500 {
+    @apply bg-yellow-700;
+  }
+  .bg-danger-500 {
+    @apply bg-red-700;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus styles for better accessibility */
+.focus-visible:focus-visible {
+  @apply outline-none ring-3 ring-focus ring-offset-2;
+}
+
+/* High contrast text for better readability */
+.text-high-contrast {
+  color: rgb(0, 0, 0);
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-brand-cream-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-brand-cream-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-brand-cream-500;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    color: black !important;
+    background: white !important;
+  }
+  
+  .bg-safe-500,
+  .bg-warning-500,
+  .bg-danger-500 {
+    background: white !important;
+    border: 2px solid black !important;
+  }
+}
+
+/* Custom component styles */
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-brand-cream-300;
+  }
+  
+  .input {
+    @apply block w-full px-3 py-2 border border-brand-cream-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-brand-navy-500 focus:border-brand-navy-500;
+  }
+  
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-100 text-gray-900 hover:bg-gray-200 focus:ring-gray-500;
+  }
+  
+  .btn-danger {
+    @apply bg-danger-600 text-white hover:bg-danger-700 focus:ring-danger-500;
+  }
+  
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  /* Brand color utilities */
+  .brand-navy { @apply text-brand-navy-500; }
+  .brand-cream { @apply bg-brand-cream-200; }
+  
+  /* Success color aliases */
+  .text-success-500 { @apply text-safe-500; }
+  .text-success-600 { @apply text-safe-600; }
+  .bg-success-50 { @apply bg-safe-50; }
+  .bg-success-100 { @apply bg-safe-100; }
+  .border-success-200 { @apply border-safe-200; }
+}

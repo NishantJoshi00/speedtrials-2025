@@ -1,0 +1,48 @@
+{
+  "name": "georgia-water-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "ingest": "node scripts/ingest-data.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.4",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "@types/leaflet": "^1.9.19",
+    "autoprefixer": "^10.4.16",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.0.0",
+    "d3": "^7.8.5",
+    "d3-geo": "^3.1.0",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.294.0",
+    "next": "14.0.4",
+    "postcss": "^8.4.32",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-leaflet": "^4.2.1",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^3.3.6",
+    "topojson-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/d3": "^7.4.3",
+    "@types/d3-geo": "^3.1.0",
+    "@types/node": "^20",
+    "@types/papaparse": "^5.3.14",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/topojson-client": "^3.1.4",
+    "csv-parser": "^3.0.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "papaparse": "^5.4.1",
+    "typescript": "^5"
+  }
+}
